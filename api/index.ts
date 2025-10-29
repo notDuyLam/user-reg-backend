@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import express from 'express';
 import serverless from 'serverless-http';
-import { AppModule } from '../src/app.module';
+import { AppModule } from '../src/app.module.js';
 
 let server: any;
 
