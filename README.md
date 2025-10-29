@@ -126,60 +126,6 @@ Swagger provides:
 
 For detailed Swagger guide, see [SWAGGER_GUIDE.md](./SWAGGER_GUIDE.md)
 
-## Deployment to Vercel
-
-### Prerequisites
-
-- Vercel account
-- Neon PostgreSQL database
-
-### Steps
-
-1. **Build the project:**
-
-   ```bash
-   npm run build
-   ```
-
-2. **Deploy to Vercel:**
-
-   ```bash
-   # Install Vercel CLI (if not installed)
-   npm i -g vercel
-
-   # Deploy
-   vercel
-   ```
-
-3. **Set Environment Variables on Vercel:**
-   In the Vercel dashboard, add these environment variables:
-   - `DATABASE_URL` - Your Neon connection string
-   - `CORS_ORIGIN` - Your React frontend URL (e.g., `https://your-app.vercel.app`)
-   - `PORT` - Optional (Vercel provides this automatically)
-
-4. **Redeploy:**
-   After adding environment variables, redeploy your application.
-
-### Important Notes for Vercel Deployment
-
-- The `vercel.json` file is already configured for NestJS serverless deployment
-- Make sure to use the **pooled connection string** from Neon (not the direct connection)
-- Update `CORS_ORIGIN` to your production frontend URL
-- The database must be accessible from Vercel's serverless functions
-
-## Testing
-
-```bash
-# Unit tests
-npm run test
-
-# E2E tests
-npm run test:e2e
-
-# Test coverage
-npm run test:cov
-```
-
 ## Project Structure
 
 ```
@@ -229,7 +175,3 @@ npm run format
 # Lint code
 npm run lint
 ```
-
-## License
-
-MIT
