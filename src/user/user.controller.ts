@@ -15,6 +15,8 @@ import {
 } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
+import { Get, UnauthorizedException } from '@nestjs/common';
 
 @ApiTags('users')
 @Controller('user')
@@ -101,5 +103,48 @@ export class UserController {
       data: user,
     };
   }
+
+	@Post('login')
+	@HttpCode(HttpStatus.OK)
+	@ApiOperation({ summary: 'Login user', description: 'Authenticate user with email and password.' })
+	@ApiBody({
+		type: LoginUserDto,
+		description: 'User login credentials',
+		examples: {
+			default: {
+				summary: 'Valid login example',
+				value: { email: 'user@example.com', password: 'SecurePass123!' },
+			},
+		},
+	})
+	@ApiResponse({ status: 200, description: 'Login successful' })
+	@ApiResponse({ status: 401, description: 'Invalid credentials' })
+	async login(@Body() loginUserDto: LoginUserDto) {
+		try {
+			const user = await this.userService.login(loginUserDto);
+			return {
+				success: true,
+				message: 'Login successful',
+				data: user,
+			};
+		} catch (error) {
+			if (error instanceof UnauthorizedException) {
+				throw error;
+			}
+			throw error;
+		}
+	}
+
+	@Get()
+	@HttpCode(HttpStatus.OK)
+	@ApiOperation({ summary: 'List users', description: 'Retrieve a list of all users.' })
+	@ApiResponse({ status: 200, description: 'List of users returned' })
+	async listUsers() {
+		const users = await this.userService.findAll();
+		return {
+			success: true,
+			data: users,
+		};
+	}
 }
 

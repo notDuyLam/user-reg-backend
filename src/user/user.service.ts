@@ -1,9 +1,10 @@
-import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { LoginUserDto } from './dto/login-user.dto';
 
 @Injectable()
 export class UserService {
@@ -45,5 +46,25 @@ export class UserService {
       throw new InternalServerErrorException('Failed to create user');
     }
   }
+
+	async login(loginUserDto: LoginUserDto): Promise<Omit<User, 'password'>> {
+		const user = await this.userRepository.findOne({ where: { email: loginUserDto.email } });
+		if (!user) {
+			throw new UnauthorizedException('Invalid email or password');
+		}
+
+		const isMatch = await bcrypt.compare(loginUserDto.password, user.password);
+		if (!isMatch) {
+			throw new UnauthorizedException('Invalid email or password');
+		}
+
+		const { password, ...userWithoutPassword } = user;
+		return userWithoutPassword;
+	}
+
+	async findAll(): Promise<Array<Omit<User, 'password'>>> {
+		const users = await this.userRepository.find();
+		return users.map(({ password, ...rest }) => rest);
+	}
 }
 
